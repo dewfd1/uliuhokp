@@ -1,0 +1,39 @@
+#include <iostream>
+#include "..\DynamicLib\Header.h"
+#include "windows.h"
+
+typedef bool(*CheckFunction)(const char*, const char*);
+
+int main() {
+    setlocale(LC_ALL, "");
+    HINSTANCE hDll = LoadLibrary(L"DynamicLib.dll");
+    if (!hDll) {
+        std::cout << "Ошибка загрузки библиотеки.\n";
+        return 1;
+    }
+
+    CheckFunction checkFunc = reinterpret_cast<CheckFunction>(GetProcAddress(hDll, "CheckCharacters"));
+    if (!checkFunc) {
+        std::cout << "Ошибка загрузки функции из библиотеки.\n";
+        FreeLibrary(hDll);
+        return 1;
+    }
+
+    std::string inputString, charactersToFind;
+    std::cout << "Введите строку без пробелов: ";
+    std::cin >> inputString;
+    std::cout << "Введите символы для поиска: ";
+    std::cin >> charactersToFind;
+
+    bool result = checkFunc(inputString.c_str(), charactersToFind.c_str());
+
+    if (result) {
+        std::cout << "Все символы найдены в строке.\n";
+    }
+    else {
+        std::cout << "Не все символы найдены в строке.\n";
+    }
+
+    FreeLibrary(hDll);
+    return 0;
+}
