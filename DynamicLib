@@ -1,0 +1,24 @@
+#include <iostream>
+#include <cstring>
+
+extern "C" {
+    __declspec(dllexport) bool CheckCharacters(const char* str, const char* chars) {
+        int strLen = strlen(str);
+        int charsLen = strlen(chars);
+
+        for (int i = 0; i < charsLen; ++i) {
+            bool found = false;
+            for (int j = 0; j < strLen; ++j) {
+                if (chars[i] == str[j]) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+}
